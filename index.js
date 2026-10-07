@@ -4,7 +4,6 @@ const path = require('path');
 const _ = require('lodash');
 const fs = require('fs-extra');
 const webpack = require('webpack');
-const WebpackDevServer = require('webpack-dev-server');
 const chalk = require('chalk');
 const chokidar = require('chokidar');
 // eslint-disable-next-line node/no-extraneous-require
@@ -235,6 +234,11 @@ async function createCacheDir(dir) {
 }
 
 async function watchAdmin({ dir, host, port, browser, options }) {
+  // Dev-only and not a dependency (its express/sockjs/selfsigned tree never ships):
+  // `yarn add -D webpack-dev-server@3` to use `strapi develop --watch-admin`.
+  // eslint-disable-next-line node/no-missing-require
+  const WebpackDevServer = require('webpack-dev-server');
+
   // Create the cache dir containing the front-end files.
   await createCacheDir(dir);
 

@@ -30,7 +30,10 @@ const password = yup
   .min(8)
   .matches(/[a-z]/, '${path} must contain at least one lowercase character')
   .matches(/[A-Z]/, '${path} must contain at least one uppercase character')
-  .matches(/\d/, '${path} must contain at least one number');
+  .matches(/\d/, '${path} must contain at least one number')
+  // bcrypt only reads the first 72 bytes: a longer password would be silently truncated, and hashing
+  // an unbounded one is a denial of service (CVE-2025-25298).
+  .test('max-bytes', '${path} must be at most 72 bytes', value => !value || Buffer.byteLength(value) <= 72);
 
 const roles = yup.array(yup.strapiID()).min(1);
 
