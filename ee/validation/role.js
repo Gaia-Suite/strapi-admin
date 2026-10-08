@@ -2,7 +2,7 @@
 
 const { yup, formatYupErrors } = require('strapi-utils');
 // eslint-disable-next-line node/no-extraneous-require
-const { features } = require('strapi/lib/utils/ee');
+const { features } = require('@gaia-suite/strapi/lib/utils/ee');
 
 const handleReject = error => Promise.reject(formatYupErrors(error));
 
