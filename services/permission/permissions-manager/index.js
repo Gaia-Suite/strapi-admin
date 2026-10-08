@@ -65,9 +65,11 @@ module.exports = ({ ability, action, model }) => ({
       return data.map(entity => this.sanitize(entity, { action, withPrivate, isOutput }));
     }
 
-    const permittedFields = permittedFieldsOf(ability, actionOverride, subject);
+    const permittedFields = permittedFieldsOf(ability, actionOverride, subject, {
+      fieldsFrom: rule => rule.fields || [],
+    });
     const hasAtLeastOneRegisteredField = _.some(
-      _.flatMap(ability.rulesFor(actionOverride, subject), 'fields')
+      _.flatMap(ability.rulesFor(actionOverride, ability.detectSubjectType(subject)), 'fields')
     );
     const shouldIncludeAllFields = _.isEmpty(permittedFields) && !hasAtLeastOneRegisteredField;
 
