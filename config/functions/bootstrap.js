@@ -13,11 +13,11 @@ const defaultAdminAuthSettings = {
 };
 
 const registerPermissionActions = () => {
-  getService('permission').actionProvider.registerMany(adminActions.actions);
+  return getService('permission').actionProvider.registerMany(adminActions.actions);
 };
 
 const registerAdminConditions = () => {
-  getService('permission').conditionProvider.registerMany(adminConditions.conditions);
+  return getService('permission').conditionProvider.registerMany(adminConditions.conditions);
 };
 
 const syncAuthSettings = async () => {
@@ -38,8 +38,9 @@ const syncAuthSettings = async () => {
 };
 
 module.exports = async () => {
-  registerAdminConditions();
-  registerPermissionActions();
+  // Awaited: the providers refuse registrations once Strapi is loaded, right after this function returns
+  await registerAdminConditions();
+  await registerPermissionActions();
 
   strapi.admin.destroy = async () => {
     const { conditionProvider, actionProvider } = getService('permission');
