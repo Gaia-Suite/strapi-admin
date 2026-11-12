@@ -41,6 +41,19 @@ module.exports = async () => {
   registerAdminConditions();
   registerPermissionActions();
 
+  strapi.admin.destroy = async () => {
+    const { conditionProvider, actionProvider } = getService('permission');
+
+    await conditionProvider.clear();
+    await actionProvider.clear();
+  };
+
+  // Only the cron instance syncs roles, permissions and auth settings to the DB: instances booting together
+  // would delete and update the same permission rows, and the loser's bootstrap error stops its process.
+  if (!strapi.config.get('server.cron.enabled')) {
+    return;
+  }
+
   const permissionService = getService('permission');
   const userService = getService('user');
   const roleService = getService('role');
@@ -57,11 +70,4 @@ module.exports = async () => {
   await userService.displayWarningIfUsersDontHaveRole();
 
   await syncAuthSettings();
-
-  strapi.admin.destroy = async () => {
-    const { conditionProvider, actionProvider } = getService('permission');
-
-    await conditionProvider.clear();
-    await actionProvider.clear();
-  };
 };
